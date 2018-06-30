@@ -94,7 +94,7 @@
               </b-form-group>
               <!--Select Button-->
               <div style="text-align: right;">
-                <b-button :variant="outline-primary">
+                <b-button onclick="test()" :variant="outline-primary">
                   Select Distributor
                 </b-button>
               </div>
@@ -176,7 +176,8 @@
       <div class="row col-md-9" style="text-align: center;">
         <div class="row">
           <div class=col-md-12>
-            <b-table striped hover :responsive="true" :outlined="true"
+            <b-table id="distributorTable"
+                     striped hover :responsive="true" :outlined="true"
                      :sort-by.sync="sortBy"
                      :sort-desc.sync="sortDesc"
                      :items="distributors"
@@ -280,7 +281,8 @@
           {key: 'inletDiameter', sortable: true},
           {key: '" E "', sortable: true},
           {key: 'F', sortable: true}
-        ]
+        ],
+        filter: []
       }
     },
     methods: {
@@ -304,11 +306,18 @@
         reader.readAsText(fileToLoad)
       },
       save() {
-        const blob = new Blob([this.parseJSONtoCSV()], {type: 'text/csv'})
+        const blob = new Blob([this.parseJSONtoCSV()], {type: 'text/csv'});
         FileSaver.saveAs(blob, 'test.csv')
       },
       parseJSONtoCSV() {
         return Papa.unparse(this.doc)
+      },
+      test(){
+        console.log('test')
+      },
+      filterDistributors() {
+        console.log('filter distributors table');
+        /*$('distributorTable').filter(this.type);*/
       }
     }
   }
