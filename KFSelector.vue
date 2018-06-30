@@ -185,7 +185,7 @@
                      caption-top
                      head-variant="dark"
                      class="col-md-12"
-                     style="height: 500px; text-align: center;">
+                     style="height: 100%; max-height: 750px; text-align: center;">
               <template slot="table-caption">
                 Brought to you by NewViz Programming LLC
               </template>
@@ -199,7 +199,7 @@
       </div>
     </div>
 
-    <table>
+    <!--<table>
       <tr>
         <th>All</th>
         <th>By Type</th>
@@ -213,13 +213,13 @@
         <td>
           <div v-for="item in distributors">{{item.bodyStyle}}</div>
         </td>
-        <!--<td>
+        &lt;!&ndash;<td>
           <div v-for="item in filteredByType">{{item.bodyStyle}}</div>
-        </td>-->
+        </td>&ndash;&gt;
         <td>
           <div v-for="item in getByInletSize">{{item.bodyStyle}}</div>
         </td>
-        <!--<td>
+        &lt;!&ndash;<td>
           <div v-for="item in filteredByCircuitNum">{{item.bodyStyle}}</div>
         </td>
         <td>
@@ -230,9 +230,9 @@
         </td>
         <td>
           <div v-for="item in filteredByAll">{{item.bodyStyle}}</div>
-        </td>-->
+        </td>&ndash;&gt;
       </tr>
-    </table>
+    </table>-->
 
   </div>
 </template>
