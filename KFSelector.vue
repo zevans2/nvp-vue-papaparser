@@ -1,18 +1,68 @@
 <template>
-<div class="row">
-  <h2>KeepFlo Selector</h2>
-  <b-button :size="lg" :variant="primary" onclick="getDistributors()">Crick Here</b-button>
-</div>
+  <div class="parse">
+    <h1>Parse CSV to JSON</h1>
+    <input
+      id="fileInput"
+      type="file"
+      @change="upload">
+    <a
+      @click='save'
+      type='button'
+      download >
+      Save
+    </a>
+    <div class="body">
+      <div class="entry">
+        <textarea
+          class="entry-result"
+          v-model='doc'
+          placeholder="Type here">
+        </textarea>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-  import { getDistributors } from "../scripts/handler";
+  import Papa from 'papaparse'
+  import Blob from 'blob'
+  import FileSaver from 'file-saver'
 
-  let distributors = getDistributors();
   export default {
-        name: "k-f-selector",
-        distributors: distributors
+    name: "k-f-selector",
+    data() {
+      return {
+        doc: null
+      }
+    },
+    methods: {
+      upload(e) {
+        const that = this;
+        const fileToLoad = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = fileLoadedEvent => {
+          Papa.parse(fileLoadedEvent.target.result, {
+            header: true,
+            complete(results) {
+              console.log('complete', results);
+              that.doc = JSON.stringify(results.data, null, 2)
+            },
+            error(errors) {
+              console.log('error', errors)
+            }
+          })
+        };
+        reader.readAsText(fileToLoad)
+      },
+      save() {
+        const blob = new Blob([this.parseJSONtoCSV()], {type: 'text/csv'})
+        FileSaver.saveAs(blob, 'test.csv')
+      },
+      parseJSONtoCSV() {
+        return Papa.unparse(this.doc)
+      }
     }
+  }
 </script>
 
 <style scoped>
