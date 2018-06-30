@@ -94,7 +94,7 @@
               </b-form-group>
               <!--Select Button-->
               <div style="text-align: right;">
-                <b-button onclick="test()" :variant="outline-primary">
+                <b-button v-on:click="filterDistributors()" :variant="outline-primary">
                   Select Distributor
                 </b-button>
               </div>
@@ -198,6 +198,42 @@
         </div>
       </div>
     </div>
+
+    <table>
+      <tr>
+        <th>All</th>
+        <th>By Type</th>
+        <th>By IType</th>
+        <th>By Circuit</th>
+        <th>By ISize</th>
+        <th>By TubingOD</th>
+        <th>By All</th>
+      </tr>
+      <tr>
+        <td>
+          <div v-for="item in distributors">{{item.bodyStyle}}</div>
+        </td>
+        <!--<td>
+          <div v-for="item in filteredByType">{{item.bodyStyle}}</div>
+        </td>-->
+        <td>
+          <div v-for="item in getByInletSize">{{item.bodyStyle}}</div>
+        </td>
+        <!--<td>
+          <div v-for="item in filteredByCircuitNum">{{item.bodyStyle}}</div>
+        </td>
+        <td>
+          <div v-for="item in filteredByInletSize">{{item.bodyStyle}}</div>
+        </td>
+        <td>
+          <div v-for="item in filteredByTubingOD">{{item.bodyStyle}}</div>
+        </td>
+        <td>
+          <div v-for="item in filteredByAll">{{item.bodyStyle}}</div>
+        </td>-->
+      </tr>
+    </table>
+
   </div>
 </template>
 
@@ -236,9 +272,11 @@
     data() {
       return {
         doc: null,
-        distributors: [{"bodyStyle": '', "sporlanStyle": '', "type": '', "minCircuit": '', "maxCircuit": '',
-          "circuitSize": '', "nozzleSize": '', "hasSidePort":'', "OAL": '', "OD":'',"IDTol":'',"inletDiameter":'',
-          "e":'', "f":''}],
+        distributors: [{
+          "bodyStyle": '', "sporlanStyle": '', "type": '', "minCircuit": '', "maxCircuit": '',
+          "circuitSize": '', "nozzleSize": '', "hasSidePort": '', "OAL": '', "OD": '', "IDTol": '', "inletDiameter": '',
+          "e": '', "f": ''
+        }],
         type: null,
         inletType: null,
         inletTypes: inletTypes,
@@ -282,7 +320,6 @@
           {key: '" E "', sortable: true},
           {key: 'F', sortable: true}
         ],
-        filter: []
       }
     },
     methods: {
@@ -312,14 +349,103 @@
       parseJSONtoCSV() {
         return Papa.unparse(this.doc)
       },
-      test(){
+      test() {
         console.log('test')
       },
       filterDistributors() {
-        console.log('filter distributors table');
-        /*$('distributorTable').filter(this.type);*/
+        console.log('filter distributors table' +
+          '\nSort on type of: ' + this.type +
+          '\nSort on Inlet Type: ' + this.inletType +
+          '\nSort on Inlet Size: ' + this.inletSize +
+          '\nSort on Circuit Num: ' + this.circuitNum +
+          '\nSort on Tubing OD: ' + this.tubingOD +
+          '\nSort on Nozzle Size: ' + this.orrificeSize +
+          '\nSort on Nozzle type: ' + this.nozzleType +
+          '\nSort on Side Port: ' + this.sidePortType
+        );
+        this.distributors = filteredByType();
+      }
+    },
+    computed: {
+      filteredByAll() {
+        let temp = distributors;
+        temp = getByType(this.distributors, this.type);
+        temp = getByInletType(temp, this.inletType);
+        temp = getByCircuitNum(temp, this.circuitNum);
+        temp = getByInletSize(temp, this.inletSize);
+        temp = getByTubingOD(temp, this.tubingOD);
+        temp = getByNozzleSize(temp, this.orrificeSize);
+        temp = getByNozzleType(temp, this.nozzleType);
+        temp = getBySidePort(temp, this.sidePortType);
+        //todo: set filtered values = to temp without overriding data.
+        return temp;
+
+      },
+      filteredByType() {
+        return getByType(this.distributors, this.type)
+      },
+      filteredByInletType() {
+        return getByInletType(this.distributors, this.inletType)
+      },
+      filteredByCircuitNum() {
+        return getByCircuitNum(this.distributors, this.circuitNum)
+      },
+      filteredByInletSize() {
+        return getByInletSize(this.distributors, this.inletSize)
+      },
+      filteredByTubingOD() {
+        return getByTubingOD(this.distributors, this.tubingOD)
+      },
+      filteredByOrificeSize() {
+        return getByNozzleSize(this.distributors, this.nozzleSize)
+      },
+      filteredByNozzleType() {
+        return getByNozzleType(this.distributors, this.nozzleType)
+      },
+      filteredBySidePort() {
+        return getBySidePort(this.distributors, this.sidePortType)
       }
     }
+  }
+
+  function getByType(list, type) {
+    if (!type) return list;
+    return list.filter(item => item.type === type)
+  }
+
+  function getByInletSize(list, inletSize){
+    if(!inletSize) return list;
+    return list.filter(item=>item.inletSize === inletSize)
+  }
+
+  function getByInletType(list, value){
+    if(!value) return list;
+    return list.filter(item=>item.inletType === value)
+  }
+
+  function getByCircuitNum(list, value){
+    if(!value) return list;
+    return list.filter(item=>item.circuitNum === value)
+  }
+
+  function getByTubingOD(list, value){
+    if(!value) return list;
+    return list.filter(item=>item.tubingOD === value)
+  }
+
+  function getByNozzleSize(list, value){
+    if(!value) return list;
+    return list.filter(item=>item.orrificeSize === value)
+  }
+
+  function getByNozzleType(list, value){
+    if(!value) return list;
+    return list.filter(item=>item.nozzleType === value)
+  }
+
+  function getBySidePort(list, value){
+    if(!value) return list;
+    return list.filter(item=>item.sidePortType === value)
   }
 </script>
 
