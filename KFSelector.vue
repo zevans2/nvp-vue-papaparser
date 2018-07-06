@@ -94,7 +94,7 @@
               </b-form-group>
               <!--Select Button-->
               <div style="text-align: right;">
-                <b-button v-on:click="filterDistributors()" :variant="outline-primary">
+                <b-button v-on:click="filterDistributors()">
                   Select Distributor
                 </b-button>
               </div>
@@ -165,7 +165,7 @@
                 <b-form-select v-model="tubeLength" :options="tubeLengths" class="mb-3" size="sm"/>
               </b-form-group>
               <div style="text-align: right;">
-                <b-button :variant="outline-primary" class="btn btn-primary" style="text-align: left;">
+                <b-button class="btn btn-primary" style="text-align: left;">
                   Rate Distributor
                 </b-button>
               </div>
@@ -185,7 +185,7 @@
                      caption-top
                      head-variant="dark"
                      class="col-md-12"
-                     style="height: 100%; max-height: 750px; text-align: center;">
+                     style="height: 100%; max-height: 650px; text-align: center;">
               <template slot="table-caption">
                 Brought to you by NewViz Programming LLC
               </template>
@@ -334,6 +334,7 @@
               console.log('complete', results);
               that.doc = JSON.stringify(results.data, null, 2)
               that.distributors = results.data;
+              that.distributors = filterTable();
             },
             error(errors) {
               console.log('error', errors)
@@ -363,89 +364,98 @@
           '\nSort on Nozzle type: ' + this.nozzleType +
           '\nSort on Side Port: ' + this.sidePortType
         );
-        this.distributors = filteredByType();
+        /*this.distributors = filteredByType();*/
       }
     },
     computed: {
-      filteredByAll() {
-        let temp = distributors;
-        temp = getByType(this.distributors, this.type);
-        temp = getByInletType(temp, this.inletType);
-        temp = getByCircuitNum(temp, this.circuitNum);
-        temp = getByInletSize(temp, this.inletSize);
-        temp = getByTubingOD(temp, this.tubingOD);
-        temp = getByNozzleSize(temp, this.orrificeSize);
-        temp = getByNozzleType(temp, this.nozzleType);
-        temp = getBySidePort(temp, this.sidePortType);
-        //todo: set filtered values = to temp without overriding data.
-        return temp;
-
-      },
-      filteredByType() {
-        return getByType(this.distributors, this.type)
-      },
-      filteredByInletType() {
-        return getByInletType(this.distributors, this.inletType)
-      },
-      filteredByCircuitNum() {
-        return getByCircuitNum(this.distributors, this.circuitNum)
-      },
-      filteredByInletSize() {
-        return getByInletSize(this.distributors, this.inletSize)
-      },
-      filteredByTubingOD() {
-        return getByTubingOD(this.distributors, this.tubingOD)
-      },
-      filteredByOrificeSize() {
-        return getByNozzleSize(this.distributors, this.nozzleSize)
-      },
-      filteredByNozzleType() {
-        return getByNozzleType(this.distributors, this.nozzleType)
-      },
-      filteredBySidePort() {
-        return getBySidePort(this.distributors, this.sidePortType)
+      tableFilter() {
+        /*return this.model.distributors.filter((item) =>
+          item.type.includes(this.type) /!*&&
+              item.inletType.includes(this.inletType) &&
+              item.inletSize.includes(this.inletSize) &&
+              *!/
+        )
+      }*/
+        return this.distributors;
       }
+    },
+
+    filters: {
+      /*Type(table) {
+        return table.
+      }*/
+    },
+
+    filteredByAll() {
+      let temp = distributors;
+      temp = getByType(this.distributors, this.type);
+      temp = getByInletType(temp, this.inletType);
+      temp = getByCircuitNum(temp, this.circuitNum);
+      temp = getByInletSize(temp, this.inletSize);
+      temp = getByTubingOD(temp, this.tubingOD);
+      temp = getByNozzleSize(temp, this.orrificeSize);
+      temp = getByNozzleType(temp, this.nozzleType);
+      temp = getBySidePort(temp, this.sidePortType);
+      //todo: set filtered values = to temp without overriding data.
+      return temp;
+
+    },
+    filteredByType() {
+      return getByType(this.distributors, this.type)
+    },
+    filteredByInletType() {
+      return getByInletType(this.distributors, this.inletType)
+    },
+    filteredByCircuitNum() {
+      return getByCircuitNum(this.distributors, this.circuitNum)
+    },
+    filteredByInletSize() {
+      return getByInletSize(this.distributors, this.inletSize)
+    },
+    filteredByTubingOD() {
+      return getByTubingOD(this.distributors, this.tubingOD)
+    },
+    filteredByOrificeSize() {
+      return getByNozzleSize(this.distributors, this.nozzleSize)
+    },
+    filteredByNozzleType() {
+      return getByNozzleType(this.distributors, this.nozzleType)
+    },
+    filteredBySidePort() {
+      return getBySidePort(this.distributors, this.sidePortType)
     }
   }
-
   function getByType(list, type) {
     if (!type) return list;
     return list.filter(item => item.type === type)
   }
-
-  function getByInletSize(list, inletSize){
-    if(!inletSize) return list;
-    return list.filter(item=>item.inletSize === inletSize)
+  function getByInletSize(list, inletSize) {
+    if (!inletSize) return list;
+    return list.filter(item => item.inletSize === inletSize)
   }
-
-  function getByInletType(list, value){
-    if(!value) return list;
-    return list.filter(item=>item.inletType === value)
+  function getByInletType(list, value) {
+    if (!value) return list;
+    return list.filter(item => item.inletType === value)
   }
-
-  function getByCircuitNum(list, value){
-    if(!value) return list;
-    return list.filter(item=>item.circuitNum === value)
+  function getByCircuitNum(list, value) {
+    if (!value) return list;
+    return list.filter(item => item.circuitNum === value)
   }
-
-  function getByTubingOD(list, value){
-    if(!value) return list;
-    return list.filter(item=>item.tubingOD === value)
+  function getByTubingOD(list, value) {
+    if (!value) return list;
+    return list.filter(item => item.tubingOD === value)
   }
-
-  function getByNozzleSize(list, value){
-    if(!value) return list;
-    return list.filter(item=>item.orrificeSize === value)
+  function getByNozzleSize(list, value) {
+    if (!value) return list;
+    return list.filter(item => item.orrificeSize === value)
   }
-
-  function getByNozzleType(list, value){
-    if(!value) return list;
-    return list.filter(item=>item.nozzleType === value)
+  function getByNozzleType(list, value) {
+    if (!value) return list;
+    return list.filter(item => item.nozzleType === value)
   }
-
-  function getBySidePort(list, value){
-    if(!value) return list;
-    return list.filter(item=>item.sidePortType === value)
+  function getBySidePort(list, value) {
+    if (!value) return list;
+    return list.filter(item => item.sidePortType === value)
   }
 </script>
 
